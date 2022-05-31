@@ -1,0 +1,20 @@
+.modals{
+    width: 100vw;
+    position: fixed;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    left: 0;
+    top: 0;
+    background: rgba(0,0,0,0.6);
+}
+.row{
+    margin-bottom: 10px;
+}
+.col{
+    text-align: left;
+}
+.form-check {
+    width: auto;
+}

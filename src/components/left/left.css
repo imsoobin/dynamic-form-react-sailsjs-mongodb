@@ -1,0 +1,18 @@
+.left{
+    width: 30%;
+    text-align: left;
+}
+.list_btn{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.list_btn button{
+    width: 90%;
+    margin-bottom: 10px;
+}
+.btn-success{
+    display: flex;
+    align-items: center;
+}

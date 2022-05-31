@@ -1,0 +1,62 @@
+.right{
+    width: 70%;
+    text-align: left;
+    height: 100vh;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+.btn_add_session{
+    display: flex;
+    justify-content: center;
+}
+button{
+    border: none;
+    outline: none;
+}
+section{
+    width: 96%;
+    height: 70%;
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    margin: 0 auto;
+    overflow: hidden;
+    overflow-y: auto;
+    padding: 20px;
+}
+.top_sesssion{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+}
+.sesstion_content{
+    position: relative;  
+}
+.sesstion_content:hover{
+    border: 2px dotted rgba(8, 8, 8, 0.6);
+    border-radius: 10px;
+}
+.sesstion_content:hover .deleteform{
+    display: flex;
+    cursor: pointer;
+}
+.sesstion_content:hover .editform{
+    display: flex;
+    cursor: pointer;
+}
+.deleteform{
+    position: absolute;
+    right: 20px;
+    top: 50px;
+    padding: 5px;
+    background-color: aqua;
+    border-radius: 50%;
+    display: none;
+}
+.editform{
+    position: absolute;
+    right: 70px;
+    top: 50px;
+    padding: 5px;
+    background-color: aqua;
+    border-radius: 50%;
+    display: none;
+}
