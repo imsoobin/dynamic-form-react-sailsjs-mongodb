@@ -2,6 +2,8 @@ import React from "react";
 import "./right.css";
 import { DeleteIcon, EditIcon } from "../../icons/icon";
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function Right(props) {
   const {
     openSession,
@@ -10,15 +12,12 @@ function Right(props) {
     value,
     setAllValue,
     handleEditForm,
-    // idField,
   } = props;
 
   const closeSession = () => {
     setSesstion(!sesstion);
   };
   const handleRemoveForm = (index, id) => {
-    setAllValue((prev) => prev.filter((item) => item !== prev[index]));
-
     if (id && window.confirm("Are you sure?") === true) {
       axios
         .delete(`http://localhost:1337/field/${id}`, {
@@ -27,9 +26,13 @@ function Right(props) {
           },
         })
         .then((res) => {
-          alert("deleted");
+          toast.success("deleted");
+          window.location.reload();
         })
-        .catch((err) => console.log(err));
+        .catch((err) => toast.error(err));
+    }
+    if (!id) {
+      setAllValue((prev) => prev.filter((item) => item !== prev[index]));
     }
   };
 
@@ -40,14 +43,16 @@ function Right(props) {
           <button onClick={openSession}>Add session</button>
         </div>
       )}
+      <div className="dropzone"></div>
       {(sesstion || value.length > 0) && (
         <section>
           <div className="top_sesssion">
-            <div className="session">Choose something</div>
-
-            <div onClick={closeSession} style={{ cursor: "pointer" }}>
-              <DeleteIcon />
-            </div>
+            <div className="session">Create something</div>
+            {value.length <= 0 && (
+              <div onClick={closeSession} style={{ cursor: "pointer" }}>
+                <DeleteIcon />
+              </div>
+            )}
           </div>
           {value?.map((v, index) => (
             <div className="sesstion_content" key={index}>

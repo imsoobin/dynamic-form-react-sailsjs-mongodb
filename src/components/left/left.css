@@ -7,7 +7,30 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    /* height: 80%; */
+    overflow: hidden;
+    overflow-y: auto;
 }
+.list_btn::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  /* Track */
+  .list_btn::-webkit-scrollbar-track {
+    background: #ccc;
+    border-radius: 10px;
+  }
+   
+  /* Handle */
+  .list_btn::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 10px;
+  }
+  
+  /* Handle on hover */
+  .list_btn::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
 .list_btn button{
     width: 90%;
     margin-bottom: 10px;
@@ -16,3 +39,31 @@
     display: flex;
     align-items: center;
 }
+@media only screen and (max-width: 768px){
+    .left{
+        width: 100%;
+    }
+  }
+
+  #draggable01 {
+    text-align: center;
+    position: relative;
+  }
+  #draggable02{
+    text-align: center;
+    position: relative;
+  }
+  #draggable03{
+    text-align: center;
+    position: relative;
+  }
+  #draggable04{
+    text-align: center;
+    position: relative;
+  }
+  
+  .dragging {
+    opacity: 0.7;
+    z-index: 100;
+    position: relative;
+  }

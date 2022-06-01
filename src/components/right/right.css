@@ -3,6 +3,7 @@
     text-align: left;
     height: 100vh;
     border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
 }
 .btn_add_session{
     display: flex;
@@ -14,13 +15,31 @@ button{
 }
 section{
     width: 96%;
-    height: 70%;
+    height: 80%;
     box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
     margin: 0 auto;
     overflow: hidden;
     overflow-y: auto;
     padding: 20px;
+    border-radius: 10px;
+    margin-top: 30px;
 }
+.dropzone{
+    width: 69%;
+    height: 100%;
+    position: absolute;
+}
+.dropzone.dragover {
+    z-index: 100;
+}
+@media only screen and (max-width: 768px){
+    .right{
+        width: 100%;
+    }
+    section{
+      width: 100%;
+    }
+  }
 .top_sesssion{
     display: flex;
     justify-content: space-between;
@@ -29,9 +48,11 @@ section{
 }
 .sesstion_content{
     position: relative;  
+    margin: 10px 0;
 }
+
 .sesstion_content:hover{
-    border: 2px dotted rgba(8, 8, 8, 0.6);
+    border: 2.5px dotted rgba(8, 8, 8, 0.5);
     border-radius: 10px;
 }
 .sesstion_content:hover .deleteform{
@@ -59,4 +80,8 @@ section{
     background-color: aqua;
     border-radius: 50%;
     display: none;
+}
+.session{
+    font-weight: 500;
+    text-decoration: underline;
 }

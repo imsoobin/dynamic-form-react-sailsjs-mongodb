@@ -16,10 +16,15 @@ function FormList(props) {
   };
 
   const handleDeleteForm = (id) => {
-    axios
-      .delete(`${url}deleteForm/${id}`)
-      .then((res) => window.location.reload())
-      .catch((err) => console.log(err));
+    if (id && window.confirm("Are you sure?") === true) {
+      axios
+        .delete(`${url}deleteForm/${id}`)
+        .then((res) => {
+          alert("Deleted");
+          window.location.reload();
+        })
+        .catch((err) => alert(err));
+    }
   };
 
   useEffect(() => {

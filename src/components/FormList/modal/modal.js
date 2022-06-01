@@ -9,7 +9,8 @@ function CreateFrom(props) {
     setFormname(e.target.value);
   };
 
-  const addNewForm = () => {
+  const addNewForm = (e) => {
+    e.preventDefault();
     axios
       .post(
         "http://localhost:1337/form/addForm",
@@ -20,8 +21,14 @@ function CreateFrom(props) {
           },
         }
       )
-      .then((res) => alert("added"))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        // alert("added");
+        window.location.reload();
+      })
+      .catch((err) => {
+        alert(err.response.data);
+        return;
+      });
   };
 
   return (

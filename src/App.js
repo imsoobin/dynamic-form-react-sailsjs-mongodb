@@ -1,25 +1,27 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import "./App.css";
+import axios from "axios";
+import Modal from "./modal/modal";
 import Left from "./components/left/left";
 import Right from "./components/right/right";
-import Modal from "./modal/modal";
-import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+// import { useNavigate } from "react-router-dom";
 
 function App() {
-  let navigate = useNavigate();
-  const [close, setClose] = useState(false);
-  const [sesstion, setSesstion] = useState(false);
-  const [isDrop, setIsDrop] = useState(false);
-  const [value, setValue] = useState([]);
-  const [allValue, setAllValue] = useState([]);
-  const [type, setType] = useState("");
-  const [isEdit, setIsEdit] = useState(false);
-  const [test, setTest] = useState([]);
-  const [indexs, setIndex] = useState(10);
-  const [idField, setIdField] = useState();
+  // let navigate = useNavigate();
   const paramsId = useParams();
+  const [type, setType] = useState("");
+  const [test, setTest] = useState([]);
+  const [value, setValue] = useState([]);
+  // const [indexs, setIndex] = useState(10);
+  const [idField, setIdField] = useState();
+  const [close, setClose] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [isDrop, setIsDrop] = useState(false);
+  const [allValue, setAllValue] = useState([]);
+  const [sesstion, setSesstion] = useState(false);
   const toggleModal = (index) => {
     if (index === "drop") {
       setValue("");
@@ -43,7 +45,7 @@ function App() {
   };
 
   const addSessionToUse = () => {
-    alert("PLease add session to access");
+    toast.warning("PLease add session to access");
   };
 
   const openSession = () => {
@@ -69,17 +71,25 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // setValue("");
-    if (allValue[indexs]) {
-      setAllValue((prev) => prev.filter((item) => item !== prev[indexs]));
-    }
+    // if (allValue[indexs]) {
+    //   setAllValue((prev) => prev.filter((item) => item !== prev[indexs]));
+    // }
     setAllValue((prev) => [...prev, value]);
     if (isEdit) {
-      axios
-        .post(`http://localhost:1337/field/update/${idField}`, value)
-        .then((res) => alert("updated"))
-        .catch((err) => alert(`Error ${err}`));
-
-      window.location.reload();
+      axios.get(`http://localhost:1337/form/${paramsId?.id}`).then((res) => {
+        if (res?.data?.field?.length <= 0) {
+          toast.warning("You have no added field to update item");
+          return;
+        } else {
+          axios
+            .post(`http://localhost:1337/field/update/${idField}`, value)
+            .then((res) => {
+              toast.success("updated");
+              window.location.reload();
+            })
+            .catch((err) => toast.error(`Error ${err}`));
+        }
+      });
     }
     setClose(false);
   };
@@ -92,21 +102,24 @@ function App() {
     setIdField(id);
     setClose(true);
     setIsEdit(true);
-    setIndex(index);
+    // setIndex(index);
     setTest(allValue[index]);
   };
 
   const handleGetAllListForm = () => {
     if (allValue.length < 1) {
-      alert("Empty field item ");
+      toast.warning("Empty field item ");
       return;
     }
     axios
       .get(`http://localhost:1337/form/${paramsId?.id}`)
       .then((res) => {
         if (res?.data?.field?.length >= 1) {
-          alert("please create a new form to add item");
-          return navigate("/");
+          toast.warning(
+            "This form already exist. Please create a new form to add field items"
+          );
+          // navigate("/");
+          return;
         } else {
           axios
             .post("http://localhost:1337/field/add", allValue, {
@@ -114,8 +127,11 @@ function App() {
                 "Content-Type": "application/json",
               },
             })
-            .then((res) => alert("added success"))
-            .catch((err) => alert("error", err));
+            .then((res) => {
+              toast.success("added success");
+              window.location.reload();
+            })
+            .catch((err) => toast.error("error", err));
         }
       })
       .catch((err) => console.log(err));
@@ -135,10 +151,23 @@ function App() {
   return (
     <div className="App">
       <div className="app_header">
-        <p>DYNAMIC FORM</p>
-        <button onClick={handleGetAllListForm}>Add field</button>
-        <Link to={`/formdetails/${paramsId?.id}`}>View form details</Link>
-        <Link to={`/`}>View form</Link>
+        <h3>DYNAMIC FORM</h3>
+        <div>
+          <button
+            onClick={handleGetAllListForm}
+            className="btn btn-outline-success"
+          >
+            Add field
+          </button>
+          <Link to={`/formdetails/${paramsId?.id}`}>
+            <button className="btn btn-outline-success">
+              View form details
+            </button>
+          </Link>
+          <Link to={`/`}>
+            <button className="btn btn-outline-success">View form</button>
+          </Link>
+        </div>
       </div>
 
       <div className="containers">
@@ -147,6 +176,8 @@ function App() {
           sesstion={sesstion}
           addSessionToUse={addSessionToUse}
           value={allValue}
+          setClose={setClose}
+          setValue={setValue}
         />
         <Right
           openSession={openSession}
@@ -156,7 +187,6 @@ function App() {
           setAllValue={setAllValue}
           setClose={setClose}
           handleEditForm={handleEditForm}
-          // idField={idField}
         />
       </div>
       {close && (
@@ -174,6 +204,16 @@ function App() {
           setIsDrop={setIsDrop}
         />
       )}
+      <ToastContainer
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={true}
+      />
     </div>
   );
 }

@@ -1,5 +1,26 @@
+.bottom_a4{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    box-sizing: border-box;
+}
 .bottom{
-    width: 70%;
     text-align: left;
     padding: 50px;
+    border: 1px solid rgba(14, 30, 37, 0.5);
+    margin: 50px;
+    border-radius: 10px;
+}
+label{
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.input{
+    padding: 10px 0;
+}
+.back{
+    color: white;
+    text-decoration: none;
 }
