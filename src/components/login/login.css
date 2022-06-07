@@ -1,0 +1,13 @@
+/* *{margin: 0; padding: 0; box-sizing: border-box;} */
+.sendotp{
+    margin-top: 10px;
+    animation: zoom 2s alternate infinite ease-in;
+}
+@keyframes zoom {
+    from{
+        transform: scale(.8);
+    }
+    to{
+        transform: scale(1.1);
+    }
+}

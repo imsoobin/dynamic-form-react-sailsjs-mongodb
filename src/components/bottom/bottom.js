@@ -1,19 +1,21 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import "./bottom.css";
+import { getListFormId } from "../../services/form";
 
 function Bottom(props) {
   const [data, setData] = useState([]);
   const paramId = useParams();
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:1337/form/${paramId?.id}`)
-      .then((res) => setData(res?.data?.field))
+    getListFormId(paramId?.id)
+      .then((res) => {
+        if (res?.status === 200) {
+          setData(res?.data?.field);
+        }
+      })
       .catch((err) => alert(err));
   }, [paramId?.id]);
-
   return (
     <div className="bottom_a4">
       <div className="bottom">
@@ -30,7 +32,9 @@ function Bottom(props) {
           <div key={index}>
             {m?.types === "texts" ? (
               <div key={index} className="input">
-                <label>{m?.label || m?.fieldName}</label>
+                <label>
+                  {m?.label || m?.fieldName} {m.keybox === true ? "*" : ""}
+                </label>
                 <input
                   type="text"
                   className="form-control"
@@ -75,7 +79,7 @@ function Bottom(props) {
                               aria-label="Default select example"
                             >
                               <option disabled>Please choose</option>
-                              <option selected value={m?.dropvalue}>
+                              <option value={m?.dropvalue}>
                                 {m?.dropvalue}
                               </option>
                             </select>

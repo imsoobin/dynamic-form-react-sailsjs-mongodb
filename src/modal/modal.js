@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import { useParams } from "react-router-dom";
 import Dropdown from "./Dropdown/dropdown";
 import "./modal.css";
 
@@ -15,7 +14,10 @@ function Modal(props) {
     isEdit,
     test,
     setIsDrop,
+    checkboxModal,
+    tests,
   } = props;
+
   const closeModal = () => {
     setClose(false);
     if (type === "drop") {
@@ -23,6 +25,7 @@ function Modal(props) {
     }
   };
   const [form, setForm] = useState([]);
+
   const handleAdd = (e) => {
     e.preventDefault();
     const info = {
@@ -66,7 +69,7 @@ function Modal(props) {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="staticBackdropLabel">
-                    Add attributes
+                    {!isEdit ? "ADD" : "UPDATE"}
                   </h5>
                   {/* <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> */}
                 </div>
@@ -122,15 +125,13 @@ function Modal(props) {
                               value={
                                 !isEdit ? value?.dropvalue : test?.dropvalue
                               }
-                              defaultValue={value.dropvalue}
+                              defaultValue="..."
                               onChange={handleChange}
                             >
-                              <option value="" defaultValue="" selected>
-                                ...
-                              </option>
+                              <option disabled>...</option>
                               {form.map((m, i) => (
                                 <option
-                                  defaultValue={m.title}
+                                  // defaultValue={m.title}
                                   value={m.title}
                                   key={i}
                                 >
@@ -143,7 +144,7 @@ function Modal(props) {
                           <div style={{ display: "flex" }}>
                             <input
                               type={
-                                type === "texts" || type === "area"
+                                type === "texts"
                                   ? "text"
                                   : type === "num"
                                   ? "number"
@@ -165,18 +166,12 @@ function Modal(props) {
                           className="form-select"
                           aria-label="Default select example"
                           name="types"
-                          value={!isEdit ? value.types : test.types}
-                          defaultValue={!isEdit ? value.types : test.types}
+                          value={!isEdit ? value?.types : test?.types}
+                          // defaultValue="ChooseType"
+                          // defaultValue={!isEdit ? value.types : test.types}
                           onChange={handleChange}
                         >
-                          <option
-                            disabled
-                            style={{ fontWeight: "bold" }}
-                            value="..."
-                            selected
-                          >
-                            ChooseType
-                          </option>
+                          <option>ChooseType</option>
                           <option value="texts">texts</option>
                           <option value="num">num</option>
                           <option value="area">area</option>
@@ -189,9 +184,8 @@ function Modal(props) {
                             className="form-check-input"
                             type="checkbox"
                             role="switch"
-                            name="keybox"
-                            value={!isEdit ? value.keybox : test.keybox}
-                            onChange={handleChange}
+                            checked={tests}
+                            onChange={(e) => checkboxModal(e)}
                           />
                           <label
                             className="form-check-label"

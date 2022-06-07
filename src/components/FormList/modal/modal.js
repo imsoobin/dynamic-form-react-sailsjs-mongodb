@@ -1,9 +1,11 @@
-import axios from "axios";
 import React, { useState } from "react";
+import { tokenKey } from "../../../constants";
+import { addNewFormList } from "../../../services/form";
+import { toast } from "react-toastify";
 
 function CreateFrom(props) {
   const { closeNewForm } = props;
-  const [formname, setFormname] = useState();
+  const [formname, setFormname] = useState("");
 
   const handleChangeFormName = (e) => {
     setFormname(e.target.value);
@@ -11,24 +13,21 @@ function CreateFrom(props) {
 
   const addNewForm = (e) => {
     e.preventDefault();
-    axios
-      .post(
-        "http://localhost:1337/form/addForm",
-        { formName: formname },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        // alert("added");
-        window.location.reload();
-      })
-      .catch((err) => {
-        alert(err.response.data);
-        return;
-      });
+    if (!tokenKey) {
+      toast.warn("please login to create form!");
+      return;
+    } else {
+      addNewFormList({ formName: formname })
+        .then((res) => {
+          if (res?.status === 201) {
+            window.location.reload();
+          }
+        })
+        .catch((err) => {
+          toast.error(err.response.data);
+          return;
+        });
+    }
   };
 
   return (
@@ -56,10 +55,9 @@ function CreateFrom(props) {
                       <input
                         type="text"
                         className="form-control"
-                        name="label"
                         autoComplete="off"
                         value={formname}
-                        onChange={(e) => handleChangeFormName(e)}
+                        onChange={handleChangeFormName}
                         required
                       />
                     </div>

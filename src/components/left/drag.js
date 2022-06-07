@@ -1,4 +1,5 @@
 export const DragFunc = (setClose) => {
+  // eslint-disable-next-line
   let dragged;
   document.addEventListener("dragstart", (event) => {
     dragged = event.target;

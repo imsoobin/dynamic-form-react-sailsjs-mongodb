@@ -1,5 +1,5 @@
 import "./App.css";
-import axios from "axios";
+
 import Modal from "./modal/modal";
 import Left from "./components/left/left";
 import Right from "./components/right/right";
@@ -7,21 +7,26 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-// import { useNavigate } from "react-router-dom";
+import { WARNINGS } from "./constants";
+import { getListFormId } from "./services/form";
+import { addFields, getFieldsId, updateFields } from "./services/fields";
 
 function App() {
-  // let navigate = useNavigate();
+  const addMoreArr = [];
   const paramsId = useParams();
   const [type, setType] = useState("");
-  const [test, setTest] = useState([]);
-  const [value, setValue] = useState([]);
-  // const [indexs, setIndex] = useState(10);
-  const [idField, setIdField] = useState();
+  const [test, setTest] = useState();
+  const [value, setValue] = useState();
+  const [idField, setIdField] = useState("");
+  const [tests, setTests] = useState(false);
   const [close, setClose] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isDrop, setIsDrop] = useState(false);
   const [allValue, setAllValue] = useState([]);
   const [sesstion, setSesstion] = useState(false);
+  const [addMore, setAddMore] = useState([]);
+  const [toggleEditIcon, setToggleEditIcon] = useState(false);
+
   const toggleModal = (index) => {
     if (index === "drop") {
       setValue("");
@@ -44,8 +49,12 @@ function App() {
     setClose(!close);
   };
 
+  const checkboxModal = (e) => {
+    setTests(e.target.checked);
+  };
+
   const addSessionToUse = () => {
-    toast.warning("PLease add session to access");
+    toast.warning(WARNINGS.ADD_SESSION);
   };
 
   const openSession = () => {
@@ -56,96 +65,114 @@ function App() {
     const name = e.target.name;
     const value = e.target.value;
     if (isEdit) {
-      const name = e.target.name;
-      const val = e.target.value;
       setTest((prev) => {
         return {
           ...prev,
-          [name]: val,
+          [name]: value,
         };
       });
     }
-    setValue((values) => ({ ...values, [name]: value, owner: paramsId?.id }));
+    setValue((values) => ({
+      ...values,
+      [name]: value,
+      owner: paramsId?.id,
+      keybox: tests,
+    }));
   };
-
   const handleSubmit = (e) => {
-    e.preventDefault();
-    // setValue("");
     // if (allValue[indexs]) {
     //   setAllValue((prev) => prev.filter((item) => item !== prev[indexs]));
     // }
+    e.preventDefault();
+    setValue("");
+    addMoreArr.push(value);
+    setAddMore(addMoreArr);
     setAllValue((prev) => [...prev, value]);
     if (isEdit) {
-      axios.get(`http://localhost:1337/form/${paramsId?.id}`).then((res) => {
-        if (res?.data?.field?.length <= 0) {
-          toast.warning("You have no added field to update item");
-          return;
-        } else {
-          axios
-            .post(`http://localhost:1337/field/update/${idField}`, value)
-            .then((res) => {
-              toast.success("updated");
-              window.location.reload();
-            })
-            .catch((err) => toast.error(`Error ${err}`));
+      getListFormId(paramsId?.id).then((res) => {
+        if (res?.status === 200) {
+          if (res?.data?.field?.length <= 0) {
+            toast.warning(WARNINGS.ADD_TO_UPDATE);
+            return;
+          } else {
+            updateFields(idField, value)
+              .then((res) => {
+                if (res?.status === 200) {
+                  toast.success("updated");
+                  window.location.reload();
+                }
+              })
+              .catch((err) => alert(err));
+          }
         }
       });
     }
+    setTests(false);
     setClose(false);
   };
-
   const handleEditForm = (index, id, types) => {
     if (types === "drop") {
       setType("drop");
       setIsDrop(true);
     }
+
+    getFieldsId(id)
+      .then((res) => {
+        if (res?.status === 200) {
+          setTests(res?.data?.keybox);
+        }
+      })
+      .catch((err) => alert(err));
+
     setIdField(id);
     setClose(true);
     setIsEdit(true);
-    // setIndex(index);
     setTest(allValue[index]);
   };
-
   const handleGetAllListForm = () => {
     if (allValue.length < 1) {
-      toast.warning("Empty field item ");
+      toast.warning(WARNINGS.EMPTY_ITEM);
       return;
     }
-    axios
-      .get(`http://localhost:1337/form/${paramsId?.id}`)
-      .then((res) => {
-        if (res?.data?.field?.length >= 1) {
-          toast.warning(
-            "This form already exist. Please create a new form to add field items"
-          );
-          // navigate("/");
+    getListFormId(paramsId?.id).then((res) => {
+      if (res?.status === 200) {
+        if (addMore.length === 0) {
+          toast.warning(WARNINGS.FORM_EXITS);
           return;
-        } else {
-          axios
-            .post("http://localhost:1337/field/add", allValue, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
+        } else if (res?.data?.field?.length >= 1) {
+          addFields(addMore)
             .then((res) => {
-              toast.success("added success");
-              window.location.reload();
+              if (res?.status === 201) {
+                toast.success("added more success");
+                window.location.reload();
+              }
             })
-            .catch((err) => toast.error("error", err));
+            .catch((err) => toast.error("error", err.response.data));
+        } else {
+          addFields(allValue)
+            .then((res) => {
+              if (res?.status === 201) {
+                toast.success("added success");
+                window.location.reload();
+              }
+            })
+            .catch((err) => toast.error("error", err.response.data));
         }
-      })
-      .catch((err) => console.log(err));
+      }
+    });
   };
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:1337/form/${paramsId?.id}`)
+    getListFormId(paramsId?.id)
       .then((res) => {
-        if (res?.data?.field?.length > 0) {
-          setAllValue(res?.data?.field);
+        if (res?.status === 200) {
+          if (res?.data?.field?.length > 0) {
+            setAllValue(res?.data?.field);
+            setToggleEditIcon(true);
+          }
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => toast.error(err));
   }, [paramsId?.id]);
 
   return (
@@ -164,12 +191,11 @@ function App() {
               View form details
             </button>
           </Link>
-          <Link to={`/`}>
+          <Link to={`/formlist`}>
             <button className="btn btn-outline-success">View form</button>
           </Link>
         </div>
       </div>
-
       <div className="containers">
         <Left
           toggleModal={toggleModal}
@@ -187,6 +213,7 @@ function App() {
           setAllValue={setAllValue}
           setClose={setClose}
           handleEditForm={handleEditForm}
+          toggleEditIcon={toggleEditIcon}
         />
       </div>
       {close && (
@@ -202,9 +229,12 @@ function App() {
           isEdit={isEdit}
           setTest={setTest}
           setIsDrop={setIsDrop}
+          checkboxModal={checkboxModal}
+          tests={tests}
         />
       )}
       <ToastContainer
+        style={{ fontSize: "13px" }}
         autoClose={2000}
         hideProgressBar
         newestOnTop={false}
@@ -217,5 +247,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
